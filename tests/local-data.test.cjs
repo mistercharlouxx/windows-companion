@@ -11,5 +11,6 @@ test('migrates older settings with provider and screen defaults', () => {
   const data = mergeCompanionData({ settings: { autonomyMode: 'Confirm' } });
   assert.equal(data.settings.autonomyMode, 'Confirm');
   assert.equal(data.settings.modelProvider, 'auto');
+  assert.equal(data.settings.geminiModel, 'gemini-3.8-flash');
   assert.equal(data.settings.screenAwarenessEnabled, false);
 });

@@ -7,16 +7,17 @@ type DashboardEvent={id?:string;title:string;start?:string;end?:string;location?
 type GoogleDashboard={events:DashboardEvent[];conflicts:{first:{title:string};second:{title:string}}[];messages:{id?:string;subject:string;from:string;date:string}[];unreadEstimate:number};
 type MediaStatus={active:boolean;title?:string;artist?:string;album?:string;source?:string;playing?:boolean;positionSeconds?:number;durationSeconds?:number};
 type CompanionTask={id:string;title:string;details?:string;status:'inbox'|'next'|'waiting'|'done';priority:'low'|'normal'|'high'|'urgent';dueAt?:string;source:string;createdAt:string;updatedAt:string};
-type ModelProvider='auto'|'openai'|'ollama';
-type CompanionSettings={autonomyMode:'Suggest'|'Confirm'|'Trusted';startAtLogin:boolean;morningBriefingHour:number;eveningReviewHour:number;globalShortcut:string;modelProvider:ModelProvider;openAIModel?:string;screenAwarenessEnabled:boolean};
+type ModelProvider='auto'|'openai'|'gemini'|'ollama';
+type CompanionSettings={autonomyMode:'Suggest'|'Confirm'|'Trusted';startAtLogin:boolean;morningBriefingHour:number;eveningReviewHour:number;globalShortcut:string;modelProvider:ModelProvider;openAIModel?:string;geminiModel?:string;screenAwarenessEnabled:boolean};
 type ToolAction={tool:string;args:any;description?:string};
 type ChatGPTModel={slug:string;displayName:string};
 type OpenAIStatus={connected:boolean;sharing:boolean;email?:string;name?:string;models:ChatGPTModel[];error?:string};
+type GeminiStatus={configured:boolean;model:string;models:{id:string;name:string}[]};
 
 interface Window { companion: {
   setExpanded(value:boolean):Promise<void>; onExpanded(listener:(value:boolean)=>void):void; onVoiceToggle(listener:()=>void):void; voiceTranscribe(locale?:string):Promise<string>; voiceCancel():Promise<boolean>; close():Promise<void>;
   ollamaStatus():Promise<{connected:boolean;models:string[]}>;
-  openAIStatus():Promise<OpenAIStatus>;openAIConnect():Promise<OpenAIStatus>;openAIDisconnect():Promise<OpenAIStatus>;openAIModels():Promise<ChatGPTModel[]>;screenAnalyze(prompt?:string):Promise<{text:string;model:string;provider?:string}>;
+  openAIStatus():Promise<OpenAIStatus>;openAIConnect():Promise<OpenAIStatus>;openAIDisconnect():Promise<OpenAIStatus>;openAIModels():Promise<ChatGPTModel[]>;geminiStatus():Promise<GeminiStatus>;geminiConfigure(apiKey:string):Promise<GeminiStatus>;geminiDisconnect():Promise<GeminiStatus>;screenAnalyze(prompt?:string):Promise<{text:string;model:string;provider?:string}>;
   chat(messages:{role:string;content:string}[],accountEmail?:string,autonomyMode?:string):Promise<{text:string;model:string;pendingAction?:ToolAction;toolResult?:any;agentRun?:boolean;sources?:string[];steps?:number}>;
   executeAction(action:ToolAction,accountEmail?:string):Promise<any>;
   googleStatus():Promise<GoogleStatus>;googleConfigure(clientId:string,clientSecret:string):Promise<GoogleStatus>;googleConnect(email?:string,makePrimary?:boolean):Promise<{connected:true}>;googleSetPrimary(email:string):Promise<GoogleStatus>;googleDisconnect(email?:string):Promise<boolean>;googleDashboard(email?:string):Promise<GoogleDashboard>;googleImportantSummary(email?:string):Promise<{text:string;count:number;model:string}>;googleCreateEvent(email:string|undefined,event:any):Promise<any>;googleUpdateEvent(email:string|undefined,eventId:string,changes:any):Promise<any>;googleDeleteEvent(email:string|undefined,eventId:string):Promise<any>;googleRespondEvent(email:string|undefined,eventId:string,responseStatus:'accepted'|'declined'|'tentative'):Promise<any>;googleCreateDraft(email:string|undefined,message:any):Promise<{id:string}>;googleSendDraft(email:string|undefined,draftId:string):Promise<any>;

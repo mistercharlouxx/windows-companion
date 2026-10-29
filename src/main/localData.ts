@@ -8,11 +8,11 @@ export type TaskPriority = 'low' | 'normal' | 'high' | 'urgent';
 export type CompanionTask = { id: string; title: string; details?: string; status: TaskStatus; priority: TaskPriority; dueAt?: string; source: string; createdAt: string; updatedAt: string };
 export type MemoryItem = { id: string; text: string; kind: 'fact' | 'preference' | 'person' | 'project' | 'decision' | 'note'; source: string; createdAt: string; embedding?: number[] };
 export type AuditEntry = { id: string; action: string; target?: string; result: 'suggested' | 'confirmed' | 'completed' | 'failed'; createdAt: string; details?: string };
-export type ModelProvider = 'auto' | 'openai' | 'ollama';
-export type CompanionSettings = { autonomyMode: 'Suggest' | 'Confirm' | 'Trusted'; startAtLogin: boolean; morningBriefingHour: number; eveningReviewHour: number; globalShortcut: string; modelProvider: ModelProvider; openAIModel?: string; screenAwarenessEnabled: boolean };
+export type ModelProvider = 'auto' | 'openai' | 'gemini' | 'ollama';
+export type CompanionSettings = { autonomyMode: 'Suggest' | 'Confirm' | 'Trusted'; startAtLogin: boolean; morningBriefingHour: number; eveningReviewHour: number; globalShortcut: string; modelProvider: ModelProvider; openAIModel?: string; geminiModel?: string; screenAwarenessEnabled: boolean };
 export type CompanionData = { tasks: CompanionTask[]; memories: MemoryItem[]; audit: AuditEntry[]; settings: CompanionSettings };
 
-const defaults: CompanionData = { tasks: [], memories: [], audit: [], settings: { autonomyMode: 'Trusted', startAtLogin: false, morningBriefingHour: 8, eveningReviewHour: 18, globalShortcut: 'CommandOrControl+Shift+Space', modelProvider: 'auto', screenAwarenessEnabled: false } };
+const defaults: CompanionData = { tasks: [], memories: [], audit: [], settings: { autonomyMode: 'Trusted', startAtLogin: false, morningBriefingHour: 8, eveningReviewHour: 18, globalShortcut: 'CommandOrControl+Shift+Space', modelProvider: 'auto', geminiModel: 'gemini-3.8-flash', screenAwarenessEnabled: false } };
 const file = () => path.join(app.getPath('userData'), 'companion-data.bin');
 
 export function mergeCompanionData(input: Partial<CompanionData>): CompanionData {

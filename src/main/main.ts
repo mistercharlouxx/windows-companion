@@ -17,6 +17,7 @@ import { runFastResearch } from './fastResearch';
 import { chatGPTRequest, chatGPTStatus, connectChatGPT, disconnectChatGPT, listChatGPTModels } from './openaiChatgpt';
 import { shouldUseScreenAwareness } from './openaiProtocol';
 import { captureCurrentDisplay } from './screenAwareness';
+import { configureGemini, disconnectGemini, geminiRequest, geminiStatus } from './gemini';
 
 type GoogleAccount = { tokens: any; label: string };
 type GoogleState = { clientId?: string; clientSecret?: string; tokens?: any; accounts?: Record<string, GoogleAccount>; primaryEmail?: string };
@@ -76,16 +77,24 @@ async function localModelRequest(messages: { role: string; content: string }[]) 
 }
 async function modelRequest(messages: { role: string; content: string }[], imageDataUrl?: string) {
   const settings = (await readData()).settings;
-  if (imageDataUrl || settings.modelProvider !== 'ollama') {
+  if (settings.modelProvider === 'gemini') return geminiRequest(messages, settings.geminiModel, imageDataUrl);
+  if (settings.modelProvider === 'openai') {
     const status = await chatGPTStatus();
     if (status.connected && status.sharing) {
-      try { return await chatGPTRequest(messages, settings.openAIModel, imageDataUrl); }
-      catch (error) { if (settings.modelProvider === 'openai' || imageDataUrl) throw error; }
-    } else if (settings.modelProvider === 'openai' || imageDataUrl) {
-      throw new Error('Connect ChatGPT with plan usage in Settings before using this feature.');
+      return chatGPTRequest(messages, settings.openAIModel, imageDataUrl);
+    }
+    throw new Error('Connect ChatGPT with plan usage in Settings before using this feature.');
+  }
+  if (settings.modelProvider === 'auto') {
+    const status = await chatGPTStatus();
+    if (status.connected && status.sharing) {
+      try { return await chatGPTRequest(messages, settings.openAIModel, imageDataUrl); } catch { /* Fall through to Gemini or Ollama. */ }
+    }
+    if (geminiStatus(settings.geminiModel).configured) {
+      try { return await geminiRequest(messages, settings.geminiModel, imageDataUrl); } catch (error) { if (imageDataUrl) throw error; }
     }
   }
-  if (imageDataUrl) throw new Error('Screen awareness requires a connected ChatGPT account.');
+  if (imageDataUrl) throw new Error('Screen awareness requires ChatGPT or a configured Gemini API key.');
   return localModelRequest(messages);
 }
 async function analyzeCurrentScreen(prompt: string, conversation: { role: string; content: string }[] = []) {
@@ -329,6 +338,9 @@ app.whenReady().then(async () => {
   ipcMain.handle('openai:connect', () => connectChatGPT());
   ipcMain.handle('openai:disconnect', () => disconnectChatGPT());
   ipcMain.handle('openai:models', () => listChatGPTModels());
+  ipcMain.handle('gemini:status', async () => { const settings = (await readData()).settings; return geminiStatus(settings.geminiModel); });
+  ipcMain.handle('gemini:configure', async (_e, apiKey: string) => { const settings = (await readData()).settings; return configureGemini(apiKey, settings.geminiModel); });
+  ipcMain.handle('gemini:disconnect', () => disconnectGemini());
   ipcMain.handle('screen:analyze', (_e, prompt?: string) => analyzeCurrentScreen(prompt || 'Describe the current screen and point out anything that needs attention.'));
   ipcMain.handle('voice:transcribe', (_e, locale?: string) => transcribeVoice(locale));
   ipcMain.handle('voice:cancel', () => cancelVoiceTranscription());

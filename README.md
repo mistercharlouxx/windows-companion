@@ -17,7 +17,7 @@ Companion is a minimalist, always-on-top AI assistant for Windows. It lives quie
 
 ## What it can do
 
-- **Talk naturally** through ChatGPT or a local Ollama model, with automatic fallback.
+- **Talk naturally** through ChatGPT, the Gemini API, or a local Ollama model, with automatic fallback.
 - **See your screen on request** and reason about the active display without saving screenshots.
 - **Manage your day** through Google Calendar, Gmail summaries, local tasks, reminders, and memory.
 - **Act on Windows** by opening apps, typing text, controlling media, and completing multi-step work.
@@ -29,8 +29,9 @@ Companion is a minimalist, always-on-top AI assistant for Windows. It lives quie
 
 | Mode | Behaviour |
 | --- | --- |
-| **Auto** | Uses ChatGPT when connected and falls back to Ollama when unavailable. |
+| **Auto** | Tries ChatGPT, then Gemini, then Ollama. |
 | **ChatGPT** | Uses an eligible ChatGPT plan through OAuth; no OpenAI API key is stored. |
+| **Gemini** | Uses a Gemini API key encrypted for the current Windows account. |
 | **Local** | Keeps inference on-device through Ollama. |
 
 ## Quick start
@@ -64,6 +65,10 @@ npm run connect:chatgpt
 
 The connection uses OAuth with PKCE. Availability depends on your ChatGPT plan and your organization's delegated-access policy.
 
+### Gemini API
+
+Create a restricted key in Google AI Studio, then open **Settings → Intelligence**, paste it into the Gemini field, and select **Gemini**. The key is validated before it is encrypted with Windows safe storage; it is never returned to the renderer or committed to Git.
+
 ### Google Calendar and Gmail
 
 1. Create a **Desktop app** OAuth client in Google Cloud.
@@ -88,7 +93,7 @@ Select **Local** in Companion settings, then choose the installed model.
 
 - Screen awareness is disabled until explicitly enabled.
 - A screen image is captured only for a direct screen-aware request.
-- Screenshots are sent directly to the selected ChatGPT model and are not written to disk.
+- Screenshots are sent directly to the selected ChatGPT or Gemini model and are not written to disk.
 - The Companion window is capture-protected so it does not recursively photograph itself.
 - OAuth tokens and application secrets use Windows encrypted safe storage.
 - Ollama and Faster-Whisper remain available for local inference and transcription.
@@ -103,6 +108,7 @@ Electron preload bridge
        │
 Main-process agent router
   ├── ChatGPT OAuth + Responses API
+  ├── Gemini API
   ├── Ollama local inference
   ├── Google Calendar + Gmail
   ├── Faster-Whisper transcription
