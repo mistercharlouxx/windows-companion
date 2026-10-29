@@ -13,7 +13,7 @@ const SCOPES = 'openid profile email offline_access resource.invoke chatgpt.toke
 
 type OAuthTokens = { access_token: string; refresh_token?: string; id_token: string; expires_in?: number; scope?: string; token_type?: string; savedAt: number };
 type Registration = { clientId: string; subject: string; email?: string; name?: string; scopes: string[]; tokens?: OAuthTokens };
-type OpenAIState = { hostId: string; registration?: Registration };
+type OpenAIState = { hostId: string; registration?: Registration; pendingClientId?: string };
 export type ChatGPTModel = { slug: string; displayName: string };
 
 const stateFile = () => path.join(app.getPath('userData'), 'openai-auth.bin');
@@ -79,11 +79,12 @@ export async function connectChatGPT() {
         if (authorizationError) throw new Error(incoming.searchParams.get('error_description') || authorizationError);
         const code = incoming.searchParams.get('code');
         if (!code) throw new Error('ChatGPT did not return an authorization code.');
-        const savedClientId = existing.registration?.clientId;
+        const savedClientId = existing.registration?.clientId || existing.pendingClientId;
         const returnedClientId = incoming.searchParams.get('client_id');
         const clientId = savedClientId || returnedClientId;
         if (!clientId || clientId === 'dynamic_agent_client') throw new Error('ChatGPT did not issue a client ID.');
         if (savedClientId && returnedClientId && returnedClientId !== savedClientId) throw new Error('ChatGPT returned a different client registration.');
+        if (!existing.registration && returnedClientId) await writeState({ ...existing, pendingClientId: clientId });
         const redirectUri = `http://127.0.0.1:${(server.address() as any).port}/auth/callback`;
         const token = await exchangeCode(code, clientId, verifier, redirectUri);
         const identity = await verifyIdentity(token.id_token, clientId, nonce);
@@ -100,10 +101,10 @@ export async function connectChatGPT() {
     });
     server.listen(0, '127.0.0.1', async () => {
       const redirectUri = `http://127.0.0.1:${(server.address() as any).port}/auth/callback`;
-      const clientId = existing.registration?.clientId || 'dynamic_agent_client';
+      const clientId = existing.registration?.clientId || existing.pendingClientId || 'dynamic_agent_client';
       const params: Record<string, string> = { client_id: clientId, ext_agent_host_id: existing.hostId, response_type: 'code', redirect_uri: redirectUri, scope: SCOPES, resource: RESOURCE, state, nonce, code_challenge_method: 'S256', code_challenge: challenge };
-      if (!existing.registration) params.agent_name_hint = 'Companion';
-      else {
+      if (!existing.registration && !existing.pendingClientId) params.agent_name_hint = 'Companion Tidal AI';
+      else if (existing.registration) {
         if (existing.registration.email) params.login_hint = existing.registration.email;
         if (existing.registration.tokens?.id_token) params.id_token_hint = existing.registration.tokens.id_token;
       }
