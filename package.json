@@ -1,0 +1,37 @@
+{
+  "name": "windows-companion",
+  "version": "0.1.0",
+  "private": true,
+  "main": "dist/main/main.js",
+  "scripts": {
+    "build:main": "tsc -p tsconfig.main.json",
+    "dev": "npm run build:main && concurrently -k \"vite --host 127.0.0.1\" \"wait-on http://127.0.0.1:5173 && node scripts/launch-electron.cjs --dev\"",
+    "build": "npm run build:main && vite build",
+    "test": "npm run build:main && node --test tests/*.test.cjs",
+    "verify:google": "node scripts/run-electron-script.cjs scripts/verify-google.cjs",
+    "verify:browser": "node scripts/run-electron-script.cjs scripts/verify-browser-agent.cjs",
+    "verify:agent": "node scripts/run-electron-script.cjs scripts/verify-research-agent.cjs",
+    "connect:chatgpt": "npm run build:main && node scripts/run-electron-script.cjs scripts/connect-chatgpt.cjs",
+    "start": "node scripts/launch-electron.cjs"
+  },
+  "dependencies": {
+    "@vitejs/plugin-react": "latest",
+    "better-sqlite3": "latest",
+    "electron": "latest",
+    "googleapis": "^188.0.0",
+    "jose": "^6.2.13",
+    "lucide-react": "latest",
+    "react": "latest",
+    "react-dom": "latest",
+    "vite": "latest"
+  },
+  "devDependencies": {
+    "@types/node": "latest",
+    "@types/react": "latest",
+    "@types/react-dom": "latest",
+    "concurrently": "latest",
+    "tsx": "latest",
+    "typescript": "latest",
+    "wait-on": "latest"
+  }
+}

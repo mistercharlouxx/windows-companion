@@ -1,0 +1,71 @@
+<svg width="1200" height="460" viewBox="0 0 1200 460" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">Companion</title>
+  <desc id="desc">Animated monochrome hero showing the floating Companion face and its capabilities.</desc>
+  <defs>
+    <linearGradient id="bg" x1="86" y1="18" x2="1114" y2="442" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#171717"/>
+      <stop offset="0.52" stop-color="#050505"/>
+      <stop offset="1" stop-color="#141414"/>
+    </linearGradient>
+    <linearGradient id="glass" x1="314" y1="93" x2="886" y2="365" gradientUnits="userSpaceOnUse">
+      <stop stop-color="white" stop-opacity="0.13"/>
+      <stop offset="0.45" stop-color="white" stop-opacity="0.035"/>
+      <stop offset="1" stop-color="white" stop-opacity="0.08"/>
+    </linearGradient>
+    <radialGradient id="glow">
+      <stop stop-color="white" stop-opacity="0.13"/>
+      <stop offset="1" stop-color="white" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="blur" x="-100%" y="-100%" width="300%" height="300%">
+      <feGaussianBlur stdDeviation="24"/>
+    </filter>
+    <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
+      <feDropShadow dx="0" dy="20" stdDeviation="24" flood-color="#000" flood-opacity="0.75"/>
+    </filter>
+    <style>
+      .float { animation: float 4.8s ease-in-out infinite; transform-origin: center; }
+      .blink { animation: blink 5.4s ease-in-out infinite; transform-origin: center; }
+      .pulse { animation: pulse 3.2s ease-in-out infinite; transform-origin: center; }
+      .dash { animation: dash 8s linear infinite; }
+      .dot-a { animation: dots 1.5s ease-in-out infinite; }
+      .dot-b { animation: dots 1.5s .2s ease-in-out infinite; }
+      .dot-c { animation: dots 1.5s .4s ease-in-out infinite; }
+      @keyframes float { 0%,100% { transform: translateY(0) } 50% { transform: translateY(-10px) } }
+      @keyframes blink { 0%,43%,47%,100% { transform: scaleY(1) } 45% { transform: scaleY(.08) } }
+      @keyframes pulse { 0%,100% { opacity:.25; transform:scale(.96) } 50% { opacity:.7; transform:scale(1.04) } }
+      @keyframes dash { to { stroke-dashoffset:-220 } }
+      @keyframes dots { 0%,60%,100% { opacity:.25; transform:translateY(0) } 30% { opacity:1; transform:translateY(-4px) } }
+      @media (prefers-reduced-motion: reduce) { * { animation: none !important; } }
+    </style>
+  </defs>
+  <rect x="1" y="1" width="1198" height="458" rx="34" fill="url(#bg)" stroke="white" stroke-opacity="0.13"/>
+  <circle class="pulse" cx="600" cy="170" r="176" fill="url(#glow)" filter="url(#blur)"/>
+  <path class="dash" d="M190 326C330 264 390 366 522 307C673 240 735 343 1010 266" stroke="white" stroke-opacity="0.12" stroke-width="1" stroke-dasharray="4 14"/>
+  <g opacity="0.55">
+    <circle cx="173" cy="327" r="5" fill="white"/>
+    <circle cx="1025" cy="266" r="5" fill="white"/>
+    <path d="M173 327H98" stroke="white" stroke-opacity="0.24"/>
+    <path d="M1025 266H1100" stroke="white" stroke-opacity="0.24"/>
+  </g>
+  <rect x="286" y="86" width="628" height="294" rx="32" fill="url(#glass)" stroke="white" stroke-opacity="0.16"/>
+  <path d="M319 87H880" stroke="white" stroke-opacity="0.28"/>
+  <circle cx="329" cy="119" r="4" fill="white" fill-opacity="0.42"/>
+  <circle cx="346" cy="119" r="4" fill="white" fill-opacity="0.19"/>
+  <circle cx="363" cy="119" r="4" fill="white" fill-opacity="0.09"/>
+  <g class="float" filter="url(#shadow)">
+    <rect x="516" y="105" width="168" height="104" rx="52" fill="#020202" stroke="white" stroke-opacity="0.22"/>
+    <g class="blink">
+      <rect x="554" y="145" width="24" height="7" rx="3.5" fill="white"/>
+      <rect x="622" y="145" width="24" height="7" rx="3.5" fill="white"/>
+    </g>
+    <path d="M588 174C596 181 604 181 612 174" stroke="white" stroke-width="4" stroke-linecap="round"/>
+  </g>
+  <text x="600" y="270" fill="white" text-anchor="middle" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="48" font-weight="650" letter-spacing="10">COMPANION</text>
+  <text x="600" y="307" fill="white" fill-opacity="0.55" text-anchor="middle" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="15" letter-spacing="3">LOCAL-FIRST INTELLIGENCE FOR WINDOWS</text>
+  <g transform="translate(541 338)">
+    <circle class="dot-a" cx="8" cy="8" r="4" fill="white"/>
+    <circle class="dot-b" cx="30" cy="8" r="4" fill="white"/>
+    <circle class="dot-c" cx="52" cy="8" r="4" fill="white"/>
+    <text x="76" y="13" fill="white" fill-opacity="0.48" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="13" letter-spacing="2">THINKING</text>
+  </g>
+</svg>
