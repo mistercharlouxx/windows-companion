@@ -11,7 +11,9 @@
     "verify:google": "node scripts/run-electron-script.cjs scripts/verify-google.cjs",
     "verify:browser": "node scripts/run-electron-script.cjs scripts/verify-browser-agent.cjs",
     "verify:agent": "node scripts/run-electron-script.cjs scripts/verify-research-agent.cjs",
+    "verify:gemini": "npm run build:main && node scripts/run-electron-script.cjs scripts/verify-gemini.cjs",
     "connect:chatgpt": "npm run build:main && node scripts/run-electron-script.cjs scripts/connect-chatgpt.cjs",
+    "configure:gemini": "npm run build:main && node scripts/run-electron-script.cjs scripts/configure-gemini.cjs",
     "start": "node scripts/launch-electron.cjs"
   },
   "dependencies": {
